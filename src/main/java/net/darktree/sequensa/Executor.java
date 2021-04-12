@@ -25,4 +25,11 @@ public class Executor {
         return new Stream(results);
     }
 
+    public void addNative( String name, Native function ) {
+        Binding.LIBRARY.seq_executor_add_native( pointer, name, (pointer) -> {
+            function.call( new Stream( pointer ) );
+            return pointer;
+        } );
+    }
+
 }

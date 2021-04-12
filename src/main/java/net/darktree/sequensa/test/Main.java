@@ -9,7 +9,12 @@ public class Main {
         Compiler compiler = new Compiler();
         Executor executor = new Executor();
 
-        ByteBuffer byteBuffer = compiler.compile("#exit << \"Hello Java!\"");
+        executor.addNative( "test", stream -> {
+            stream.clear();
+            stream.add( Generic.newString( "Hello Native Java Function!", false ) );
+        } );
+
+        ByteBuffer byteBuffer = compiler.compile("#exit << #test << \"Hello Java!\"");
         executor.execute( byteBuffer );
 
         Stream results = executor.getResults();
