@@ -15,4 +15,8 @@ public class Issue {
         return Binding.LIBRARY.seq_exception_message(pointer);
     }
 
+    @Override
+    public String toString() {
+        return getMessage();
+    }
 }
