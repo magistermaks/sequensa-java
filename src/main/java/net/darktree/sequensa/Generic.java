@@ -5,7 +5,7 @@ import net.darktree.sequensa.binding.Binding;
 
 public class Generic {
 
-    private final Pointer pointer;
+    protected final Pointer pointer;
 
     Generic( Pointer pointer ) {
         this.pointer = pointer;
@@ -39,19 +39,19 @@ public class Generic {
         return Binding.LIBRARY.seq_generic_bool_bool(pointer);
     }
 
-    public static Generic newNumber( double value, boolean anchor ) {
+    public static Generic ofNumber( double value, boolean anchor ) {
         return new Generic( Binding.LIBRARY.seq_generic_number_create( anchor, value ) );
     }
 
-    public static Generic newString( String value, boolean anchor ) {
+    public static Generic ofString( String value, boolean anchor ) {
         return new Generic( Binding.LIBRARY.seq_generic_string_create( anchor, value ) );
     }
 
-    public static Generic newBoolean( boolean value, boolean anchor ) {
+    public static Generic ofBoolean( boolean value, boolean anchor ) {
         return new Generic( Binding.LIBRARY.seq_generic_bool_create( anchor, value ) );
     }
 
-    public static Generic newNull( boolean anchor ) {
+    public static Generic ofNull( boolean anchor ) {
         return new Generic( Binding.LIBRARY.seq_generic_null_create( anchor ) );
     }
 

@@ -11,8 +11,27 @@ public interface SequensaLibrary extends Library {
         Pointer call( Pointer stream );
     }
 
+    interface CompilerErrorHandle extends Callback {
+        boolean call( Pointer error );
+    }
+
     /// Dummy function, it can be used to verify if the API is correctly loaded
-    boolean seq_verify();
+    int seq_verify();
+
+    /// Generic free()
+    void seq_free( Pointer ptr );
+
+    /// Get major version component
+    int seq_version_major();
+
+    /// Get minor version component
+    int seq_version_minor();
+
+    /// Get path version component
+    int seq_version_patch();
+
+    /// Get standard name
+    String seq_standard();
 
     /// Free Compiler object allocated using seq_compiler_new
     void seq_compiler_free( Pointer ptr );
@@ -25,6 +44,21 @@ public interface SequensaLibrary extends Library {
 
     /// Create and populate new program buffer
     Pointer seq_compiler_build_new( Pointer compiler, String str, Pointer size );
+
+    /// Set compiler optimization flags
+    void seq_compiler_optimizations( Pointer compiler, int flags );
+
+    /// Set Compiler error handle
+    void seq_compiler_error_handle( Pointer compiler, CompilerErrorHandle func );
+
+    /// Query error message from any exception
+    String seq_exception_message( Pointer exception );
+
+    /// Query error level from compiler exception
+    int seq_compiler_error_level( Pointer exception );
+
+    /// Decompile given bytecode buffer
+    Pointer seq_decompile( Pointer buffer, int size, String indentation, int base );
 
     /// Free Executor object allocated using seq_executor_new
     void seq_executor_free( Pointer ptr );
@@ -43,6 +77,12 @@ public interface SequensaLibrary extends Library {
 
     /// Get stream size
     int seq_stream_size( Pointer stream );
+
+    /// Get a new stream object, for use in native functions
+    Pointer seq_stream_create();
+
+    /// Free Stream object allocated using seq_stream_create
+    void seq_stream_free( Pointer stream );
 
     /// Get generic from stream
     Pointer seq_stream_generic_ptr( Pointer stream, int index );

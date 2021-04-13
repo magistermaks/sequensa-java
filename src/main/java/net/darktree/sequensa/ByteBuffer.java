@@ -5,8 +5,8 @@ import net.darktree.sequensa.binding.Binding;
 
 public class ByteBuffer {
 
-    private final Pointer pointer;
-    private final int size;
+    protected final Pointer pointer;
+    protected final int size;
 
     public ByteBuffer( Pointer pointer, int size ) {
         this.pointer = pointer;
@@ -27,7 +27,7 @@ public class ByteBuffer {
 
     @Override
     protected void finalize() {
-        Binding.LIBRARY.seq_compiler_build_free(pointer);
+        if( size != 0 ) Binding.LIBRARY.seq_compiler_build_free(pointer);
     }
 
 }

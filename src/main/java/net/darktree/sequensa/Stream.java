@@ -5,10 +5,16 @@ import net.darktree.sequensa.binding.Binding;
 
 public class Stream {
 
-    private final Pointer pointer;
+    protected final Pointer pointer;
+    protected boolean allocated = false;
 
     public Stream( Pointer pointer ) {
         this.pointer = pointer;
+    }
+
+    public Stream() {
+        this.pointer = Binding.LIBRARY.seq_stream_create();
+        this.allocated = true;
     }
 
     public int getSize() {
@@ -27,4 +33,15 @@ public class Stream {
         return new Generic( Binding.LIBRARY.seq_stream_generic_ptr( pointer, index ) );
     }
 
+    public Pointer claim() {
+        this.allocated = false;
+        return pointer;
+    }
+
+    @Override
+    protected void finalize() {
+        if( allocated ) {
+            Binding.LIBRARY.seq_stream_free(pointer);
+        }
+    }
 }

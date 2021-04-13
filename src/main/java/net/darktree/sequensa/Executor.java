@@ -2,10 +2,11 @@ package net.darktree.sequensa;
 
 import com.sun.jna.Pointer;
 import net.darktree.sequensa.binding.Binding;
+import net.darktree.sequensa.function.Native;
 
 public class Executor {
 
-    private final Pointer pointer;
+    protected final Pointer pointer;
 
     public Executor() {
         pointer = Binding.LIBRARY.seq_executor_new();
@@ -17,7 +18,11 @@ public class Executor {
     }
 
     public void execute( ByteBuffer buffer ) {
-        Binding.LIBRARY.seq_executor_execute( pointer, buffer.getPointer(), buffer.getSize() );
+        if( buffer.getSize() > 0 ) {
+            Binding.LIBRARY.seq_executor_execute(pointer, buffer.getPointer(), buffer.getSize());
+        }else{
+            throw new RuntimeException( "Empty ByteBuffer supplied to Executor!" );
+        }
     }
 
     public Stream getResults() {
@@ -25,10 +30,10 @@ public class Executor {
         return new Stream(results);
     }
 
-    public void addNative( String name, Native function ) {
+    public synchronized void addNative( String name, Native function ) {
         Binding.LIBRARY.seq_executor_add_native( pointer, name, (pointer) -> {
             function.call( new Stream( pointer ) );
-            return pointer;
+            return Pointer.NULL;
         } );
     }
 
