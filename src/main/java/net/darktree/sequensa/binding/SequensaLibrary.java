@@ -45,6 +45,9 @@ public interface SequensaLibrary extends Library {
     /// Create and populate new program buffer
     Pointer seq_compiler_build_new( Pointer compiler, String str, Pointer size );
 
+    /// created new buffer, it needs to be later freed
+    Pointer seq_buffer_new( Pointer data, int size );
+
     /// Set compiler optimization flags
     void seq_compiler_optimizations( Pointer compiler, int flags );
 

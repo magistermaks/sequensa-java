@@ -2,6 +2,7 @@ import net.darktree.sequensa.Compiler;
 import net.darktree.sequensa.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,6 +75,29 @@ public class SequensaTests {
 
         compiler.compile("set var <<");
         assertTrue( flag.get() );
+    }
+
+    @Test
+    public void byteBufferCopy() {
+        Compiler compiler = new Compiler();
+
+        ByteBuffer bb1 = compiler.compile("#exit << (2 + 4 * 8)");
+        ByteBuffer bb2 = new ByteBuffer( bb1.getBytes() );
+
+        assertArrayEquals(bb1.getBytes(), bb2.getBytes());
+    }
+
+    @Test
+    public void compilerOptimizations() {
+        Compiler compiler = new Compiler();
+
+        compiler.setOptimizations( Optimizations.empty().pureExpr().getFlags() );
+        int size1 = compiler.compile("#exit << (2 + 4 * 8)").getSize();
+
+        compiler.setOptimizations( Optimizations.empty().getFlags() );
+        int size2 = compiler.compile("#exit << (2 + 4 * 8)").getSize();
+
+        assertTrue( size1 < size2 );
     }
 
 }
