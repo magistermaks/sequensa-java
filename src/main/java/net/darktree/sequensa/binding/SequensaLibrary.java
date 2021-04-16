@@ -11,11 +11,11 @@ public interface SequensaLibrary extends Library {
         Pointer call( Pointer stream );
     }
 
-    interface CompilerErrorHandle extends Callback {
+    interface ErrorHandle extends Callback {
         boolean call( Pointer error );
     }
 
-    /// Dummy function, it can be used to verify if the API is correctly loaded
+    /// Dummy function
     int seq_verify();
 
     /// Generic free()
@@ -45,14 +45,14 @@ public interface SequensaLibrary extends Library {
     /// Create and populate new program buffer
     Pointer seq_compiler_build_new( Pointer compiler, String str, Pointer size );
 
-    /// created new buffer, it needs to be later freed
+    /// create new buffer, it needs to be later freed
     Pointer seq_buffer_new( Pointer data, int size );
 
     /// Set compiler optimization flags
     void seq_compiler_optimizations( Pointer compiler, int flags );
 
     /// Set Compiler error handle
-    void seq_compiler_error_handle( Pointer compiler, CompilerErrorHandle func );
+    void seq_compiler_error_handle( Pointer compiler, ErrorHandle func );
 
     /// Query error message from any exception
     String seq_exception_message( Pointer exception );
@@ -69,13 +69,16 @@ public interface SequensaLibrary extends Library {
     /// Create new Executor object
     Pointer seq_executor_new();
 
+    /// Set Executor's strict math flag
+    void seq_executor_strict_math( Pointer executor, boolean flag );
+
     /// Execute given program
-    void seq_executor_execute( Pointer executor, Pointer buffer, int size );
+    void seq_executor_execute( Pointer executor, Pointer buffer, int size, ErrorHandle func );
 
     /// Get pointer to the results stream
     Pointer seq_executor_results_stream_ptr( Pointer executor );
 
-    /// Add native function to executor, not thread safe
+    /// Add native function to executor
     void seq_executor_add_native( Pointer executor, String name, Native func );
 
     /// Get stream size

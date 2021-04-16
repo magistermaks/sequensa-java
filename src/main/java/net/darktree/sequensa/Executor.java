@@ -2,11 +2,14 @@ package net.darktree.sequensa;
 
 import com.sun.jna.Pointer;
 import net.darktree.sequensa.binding.Binding;
+import net.darktree.sequensa.function.ExecutorErrorHandle;
 import net.darktree.sequensa.function.Native;
+import net.darktree.sequensa.issue.Issue;
 
 public class Executor {
 
     protected final Pointer pointer;
+    private ExecutorErrorHandle errorHandle = error -> false;
 
     public Executor() {
         pointer = Binding.LIBRARY.seq_executor_new();
@@ -19,10 +22,20 @@ public class Executor {
 
     public void execute( ByteBuffer buffer ) {
         if( buffer.getSize() > 0 ) {
-            Binding.LIBRARY.seq_executor_execute(pointer, buffer.getPointer(), buffer.getSize());
+            Binding.LIBRARY.seq_executor_execute(pointer, buffer.getPointer(), buffer.getSize(), error ->
+                    errorHandle.call( new Issue(error) )
+            );
         }else{
             throw new RuntimeException( "Empty ByteBuffer supplied to Executor!" );
         }
+    }
+
+    public void setErrorHandle( ExecutorErrorHandle handle ) {
+        errorHandle = handle;
+    }
+
+    public void useStrictMath(boolean flag) {
+        Binding.LIBRARY.seq_executor_strict_math(pointer, flag);
     }
 
     public Stream getResults() {
